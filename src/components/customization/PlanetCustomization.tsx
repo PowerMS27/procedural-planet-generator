@@ -1,6 +1,6 @@
 import { Accordion, Button, Stack, Text } from "@mantine/core";
 import type { SliderProps } from "@mantine/core";
-import { SectionHeader } from "./controls/SectionHeader";
+import { CustomizationSectionHeader } from "./controls/CustomizationSectionHeader";
 import { SettingSlider } from "./controls/SettingSlider";
 
 import type { GenerationSettings, VisualSettings } from "./types";
@@ -28,9 +28,9 @@ function createSliderMarks(
   max: number,
   step: number,
 ): SliderProps["marks"] {
-  const markCount = Math.floor((max - min) / step);
+  const count = Math.floor((max - min) / step);
 
-  return Array.from({ length: markCount + 1 }, (_, index) => ({
+  return Array.from({ length: count + 1 }, (_, index) => ({
     value: min + index * step,
     label: "",
   }));
@@ -54,7 +54,10 @@ export function PlanetCustomization({
         <Accordion multiple defaultValue={["visual", "generation"]}>
           <Accordion.Item value="visual">
             <Accordion.Control>
-              <SectionHeader label="Appearance" tooltip="Text about visual" />
+              <CustomizationSectionHeader
+                label="Appearance"
+                tooltip="Current body visual features"
+              />
             </Accordion.Control>
 
             <Accordion.Panel>
@@ -90,7 +93,10 @@ export function PlanetCustomization({
 
           <Accordion.Item value="generation">
             <Accordion.Control>
-              <SectionHeader label="Generation" tooltip="Text about gen" />
+              <CustomizationSectionHeader
+                label="Generation"
+                tooltip="Procedural generation controls"
+              />
             </Accordion.Control>
 
             <Accordion.Panel>

@@ -1,90 +1,90 @@
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-import { generatePlanetGeometry } from "@/components/planet/generatePlanetGeometry";
 import type { PlanetGenerationOptions } from "@/components/planet/types";
+import { usePlanetGeometry } from "@/components/planet/usePlanetGeometry";
+
+function PlanetLoader({ radius }: { radius: number }) {
+  const ref = useRef<THREE.Mesh>(null);
+
+  useFrame((_, delta) => {
+    if (ref.current) {
+      ref.current.rotation.y += delta;
+    }
+  });
+
+  return (
+    <mesh ref={ref}>
+      <sphereGeometry args={[radius, 16, 16]} />
+      <meshBasicMaterial color="#ffffff" wireframe transparent opacity={0.3} />
+    </mesh>
+  );
+}
 
 function PlanetMesh(props: PlanetGenerationOptions) {
+  const { radius } = props;
   const meshRef = useRef<THREE.Group>(null);
-  const {
-    detail,
-    radius,
-    waterLevel,
-    terrainStrength,
-    noiseFrequency,
-    noiseOctaves,
-    seed,
-  } = props;
-
-  const geometry = useMemo(
-    () =>
-      generatePlanetGeometry({
-        detail,
-        radius,
-        waterLevel,
-        terrainStrength,
-        noiseFrequency,
-        noiseOctaves,
-        seed,
-      }),
-    [
-      detail,
-      radius,
-      waterLevel,
-      terrainStrength,
-      noiseFrequency,
-      noiseOctaves,
-      seed,
-    ],
-  );
+  const { geometry, isLoading } = usePlanetGeometry(props);
 
   useFrame((_, delta) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += delta * 0.2;
+      meshRef.current.rotation.y += delta * 0.1;
     }
   });
 
   return (
     <group ref={meshRef}>
-      <mesh>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            args={[geometry.land.positions, 3]}
-          />
+      {isLoading && <PlanetLoader radius={radius} />}
 
-          <bufferAttribute attach="index" args={[geometry.land.indices, 1]} />
+      {geometry && !isLoading && (
+        <>
+          <mesh>
+            <bufferGeometry>
+              <bufferAttribute
+                attach="attributes-position"
+                args={[geometry.land.positions, 3]}
+              />
 
-          <bufferAttribute
-            attach="attributes-color"
-            args={[geometry.land.colors, 3]}
-          />
-        </bufferGeometry>
+              <bufferAttribute
+                attach="index"
+                args={[geometry.land.indices, 1]}
+              />
 
-        <meshStandardMaterial vertexColors roughness={0.8} />
-      </mesh>
+              <bufferAttribute
+                attach="attributes-color"
+                args={[geometry.land.colors, 3]}
+              />
+            </bufferGeometry>
 
-      {geometry.water.positions.length > 0 && (
-        <mesh>
-          <bufferGeometry>
-            <bufferAttribute
-              attach="attributes-position"
-              args={[geometry.water.positions, 3]}
-            />
+            {/* land mesh */}
+            <meshStandardMaterial vertexColors roughness={0.8} flatShading />
+          </mesh>
 
-            <bufferAttribute
-              attach="index"
-              args={[geometry.water.indices, 1]}
-            />
-          </bufferGeometry>
+          {geometry.water.positions.length > 0 && (
+            <mesh>
+              <bufferGeometry>
+                <bufferAttribute
+                  attach="attributes-position"
+                  args={[geometry.water.positions, 3]}
+                />
 
-          <meshStandardMaterial
-            color="#5482cb"
-            roughness={0.05}
-            metalness={0.05}
-          />
-        </mesh>
+                <bufferAttribute
+                  attach="index"
+                  args={[geometry.water.indices, 1]}
+                />
+              </bufferGeometry>
+
+              {/* water mesh */}
+              <meshStandardMaterial
+                color="#5482cb"
+                roughness={0.15}
+                metalness={0.05}
+                flatShading
+              />
+            </mesh>
+          )}
+        </>
       )}
     </group>
   );

@@ -23,7 +23,7 @@ export default function ProceduralPlanet({
 
   return (
     <div className="space-scene">
-      <Canvas camera={{ position: [30, 30, 30], fov: 5 }}>
+      <Canvas camera={{ position: [40, 40, 40], fov: 5 }}>
         {/* sun */}
         <directionalLight
           position={sunPosition}
@@ -46,8 +46,8 @@ export default function ProceduralPlanet({
 
         <OrbitControls
           enablePan={false}
-          minDistance={10}
-          maxDistance={190}
+          minDistance={40}
+          maxDistance={100}
           zoomSpeed={3}
         />
       </Canvas>

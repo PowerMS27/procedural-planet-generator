@@ -8,7 +8,7 @@ import {
   DEFAULT_GENERATION_SETTINGS,
   DEFAULT_VISUAL_SETTINGS,
   INITIAL_SEED,
-} from "@/components/customization/defaults";
+} from "@/components/customization/planetDefaults";
 
 import type {
   GenerationSettings,

@@ -1,5 +1,5 @@
 import type { GeneratedPlanetGeometry, PlanetGenerationOptions } from "./types";
-import { getBiome, getBiomeColor } from "./biome";
+import { getBiome, getBiomeColor } from "./biome/biome";
 import { generateIcosphere } from "./generation/icosphere";
 import { calculateVertexHeight } from "./generation/vertexHeight";
 import { createTerrainHeight } from "./noise";
@@ -95,7 +95,9 @@ export function generatePlanetGeometry({
     });
 
     const isBaseWater = h0 < waterLevel && h1 < waterLevel && h2 < waterLevel;
-    const isWater = isBaseWater;
+    const isIceOrSnowOnWater =
+      isBaseWater && (triangleBiome === "ice" || triangleBiome === "snow");
+    const isWater = isBaseWater && !isIceOrSnowOnWater;
 
     if (isWater) {
       // Separate water mesh
@@ -126,7 +128,7 @@ export function generatePlanetGeometry({
       waterIndices[waterIdxCount++] = offset + 1;
       waterIndices[waterIdxCount++] = offset + 2;
     } else {
-      // Terrain mesh
+      // Terrain and frozen water - land mesh
       const offset = landVertCount / 3;
       const color = getBiomeColor(triangleBiome);
 

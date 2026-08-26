@@ -22,3 +22,17 @@
   color: var(--mantine-color-dimmed);
   font-size: var(--mantine-font-size-xs);
 }
+.mantine-Accordion-control,
+.mantine-Accordion-control .mantine-Text-root {
+  transition: color 0.2s;
+}
+.mantine-Accordion-control:hover,
+.mantine-Accordion-control:hover .mantine-Text-root {
+  color: var(--mantine-color-purple-6) !important;
+}
+.mantine-Button-root {
+  transition: color 0.2s;
+  &.button--purple:hover {
+    color: var(--mantine-color-purple-6) !important;
+  }
+}

@@ -1,11 +1,14 @@
 import { Group, Text, Tooltip } from "@mantine/core";
 
-interface SectionHeaderProps {
+interface CustomizationSectionHeaderProps {
   label: string;
   tooltip: string;
 }
 
-export function SectionHeader({ label, tooltip }: SectionHeaderProps) {
+export function CustomizationSectionHeader({
+  label,
+  tooltip,
+}: CustomizationSectionHeaderProps) {
   return (
     <Group gap={6} wrap="nowrap">
       <Text className="customization-section-header__title">{label}</Text>

@@ -29,7 +29,7 @@ export function createTerrainHeight({
         ) * amplitude;
 
       currentFrequency *= 2;
-      amplitude *= 0.4;
+      amplitude *= 0.5;
     }
 
     return height;
