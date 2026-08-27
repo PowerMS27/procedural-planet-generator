@@ -1,9 +1,16 @@
+import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import { Accordion, Button, Stack, Text } from "@mantine/core";
 import type { SliderProps } from "@mantine/core";
+import { BiomeColorSettings } from "./controls/BiomeColorSettings";
 import { CustomizationSectionHeader } from "./controls/CustomizationSectionHeader";
+import { PresetMenu } from "./controls/PresetMenu";
+import { SavePresetModal } from "./controls/SavePresetModal";
 import { SettingSlider } from "./controls/SettingSlider";
+import type { EditableBiome } from "@/components/planet/biome/biomes";
+import { BIOME_COLOR_SWATCHES } from "./biomeColorSwatches";
 
-import type { GenerationSettings, VisualSettings } from "./types";
+import type { GenerationSettings, PlanetPreset, VisualSettings } from "./types";
 
 interface PlanetCustomizationProps {
   seed: number;
@@ -21,7 +28,21 @@ interface PlanetCustomizationProps {
   ) => void;
 
   onGenerateNew: () => void;
+
+  presets: PlanetPreset[];
+  onPresetSelect: (preset: PlanetPreset) => void;
+  onSavePreset: (preset: PlanetPreset) => void;
+  onDeletePreset: (id: string) => void;
+  onColorChange: (biome: EditableBiome, color: string) => void;
 }
+
+const COLOR_OPTIONS: { key: EditableBiome; label: string }[] = [
+  { key: "ocean", label: "Water" },
+  { key: "grassland", label: "Grass" },
+  { key: "beach", label: "Sand" },
+  { key: "desert", label: "Desert" },
+  { key: "mountain", label: "Mountain" },
+];
 
 function createSliderMarks(
   min: number,
@@ -43,13 +64,58 @@ export function PlanetCustomization({
   onVisualChange,
   onGenerationChange,
   onGenerateNew,
+  presets,
+  onPresetSelect,
+  onSavePreset,
+  onDeletePreset,
+  onColorChange,
 }: PlanetCustomizationProps) {
+  const [isSaveModalOpen, saveModal] = useDisclosure(false);
+
+  const handleSavePreset = (name: string) => {
+    onSavePreset({
+      id: crypto.randomUUID(),
+      name,
+      seed,
+      visual: visualSettings,
+      generation: generationSettings,
+    });
+
+    notifications.show({
+      title: "Preset saved",
+      message: `"${name}" has been added to presets`,
+    });
+
+    saveModal.close();
+  };
+
   return (
     <aside className="planet-customization">
       <Stack gap="md">
         <Text size="xs" c="dimmed" ta="left">
           Seed: {seed}
         </Text>
+
+        <PresetMenu
+          presets={presets}
+          onSelect={onPresetSelect}
+          onDelete={onDeletePreset}
+        />
+
+        <Button
+          bd="2px solid ice.5"
+          onClick={saveModal.open}
+          className="button--ice"
+        >
+          Save Current Planet
+        </Button>
+
+        <SavePresetModal
+          opened={isSaveModalOpen}
+          defaultName={`Planet ${presets.length + 1}`}
+          onClose={saveModal.close}
+          onSave={handleSavePreset}
+        />
 
         <Accordion multiple defaultValue={["visual", "generation"]}>
           <Accordion.Item value="visual">
@@ -75,6 +141,16 @@ export function PlanetCustomization({
                 />
 
                 <SettingSlider
+                  label="Temperature"
+                  value={visualSettings.temperature}
+                  onChange={(value) => onVisualChange("temperature", value)}
+                  min={-30}
+                  max={100}
+                  step={10}
+                  marks={createSliderMarks(-20, 100, 10)}
+                />
+
+                <SettingSlider
                   label="Water level"
                   value={visualSettings.waterLevel}
                   onChange={(value) => onVisualChange("waterLevel", value)}
@@ -86,6 +162,16 @@ export function PlanetCustomization({
                   formatValue={(value) => Number(value.toFixed(1)).toString()}
                   sliderLabel={(value) => Number(value.toFixed(1)).toString()}
                   marks={createSliderMarks(0, 3, 0.1)}
+                />
+
+                <BiomeColorSettings
+                  colors={COLOR_OPTIONS.map(({ key, label }) => ({
+                    key,
+                    label,
+                    value: visualSettings.colors[key],
+                    swatches: BIOME_COLOR_SWATCHES[key],
+                  }))}
+                  onChange={onColorChange}
                 />
               </Stack>
             </Accordion.Panel>

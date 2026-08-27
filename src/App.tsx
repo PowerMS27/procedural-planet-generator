@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { MantineProvider } from "@mantine/core";
+import { Notifications } from "@mantine/notifications";
 
 import ProceduralPlanet from "@/components/ProceduralPlanet";
 import { PlanetCustomization } from "@/components/customization/PlanetCustomization";
+import { usePlanetPresets } from "@/components/customization/usePlanetPresets";
+import type { EditableBiome } from "@/components/planet/biome/biomes";
 
 import {
   DEFAULT_GENERATION_SETTINGS,
@@ -12,6 +15,7 @@ import {
 
 import type {
   GenerationSettings,
+  PlanetPreset,
   PlanetState,
   VisualSettings,
 } from "@/components/customization/types";
@@ -30,12 +34,27 @@ function App() {
     generation: DEFAULT_GENERATION_SETTINGS,
   });
 
+  const handleColorChange = (biome: EditableBiome, color: string) => {
+    setPlanet((current) => ({
+      ...current,
+      visual: {
+        ...current.visual,
+        colors: {
+          ...current.visual.colors,
+          [biome]: color,
+        },
+      },
+    }));
+  };
+
   const [debouncedVisual, setDebouncedVisual] = useState<VisualSettings>(
     planet.visual,
   );
 
   const [debouncedGeneration, setDebouncedGeneration] =
     useState<GenerationSettings>(planet.generation);
+
+  const { presets, savePreset, deletePreset } = usePlanetPresets();
 
   useEffect(() => {
     // debounce for sliders
@@ -73,6 +92,17 @@ function App() {
     }));
   };
 
+  const handlePresetSelect = (preset: PlanetPreset) => {
+    setPlanet({
+      seed: preset.seed,
+      visual: preset.visual,
+      generation: preset.generation,
+    });
+
+    setDebouncedVisual(preset.visual);
+    setDebouncedGeneration(preset.generation);
+  };
+
   const handleGenerateNew = () => {
     // New seed while keeping settings the same
     setPlanet((current) => ({
@@ -83,6 +113,8 @@ function App() {
 
   return (
     <MantineProvider theme={theme}>
+      <Notifications position="top-center" />
+
       <div className="main-screen">
         <ProceduralPlanet
           visualSettings={debouncedVisual}
@@ -97,6 +129,11 @@ function App() {
           onVisualChange={handleVisualChange}
           onGenerationChange={handleGenerationChange}
           onGenerateNew={handleGenerateNew}
+          presets={presets}
+          onPresetSelect={handlePresetSelect}
+          onSavePreset={savePreset}
+          onDeletePreset={deletePreset}
+          onColorChange={handleColorChange}
         />
       </div>
     </MantineProvider>

@@ -10,10 +10,12 @@ export function generatePlanetGeometry({
   detail,
   radius,
   waterLevel,
+  temperature,
   terrainStrength,
   noiseFrequency,
   noiseOctaves,
   seed,
+  colors,
 }: PlanetGenerationOptions): GeneratedPlanetGeometry {
   const { vertices, indices } = generateIcosphere(detail);
   const totalTriangles = indices.length / 3;
@@ -43,6 +45,9 @@ export function generatePlanetGeometry({
     createSeededRandom((seed ^ 0x9e3779b9) >>> 0),
   );
 
+  // Extreme temperatures remove water
+  const isExtremeTemperature = temperature <= -30 || temperature >= 100;
+
   for (let i = 0; i < indices.length; i += 3) {
     const t0 = indices[i];
     const t1 = indices[i + 1];
@@ -57,6 +62,7 @@ export function generatePlanetGeometry({
       y: v0[1],
       z: v0[2],
       waterLevel,
+      temperature,
       getTerrainHeight,
     });
 
@@ -65,6 +71,7 @@ export function generatePlanetGeometry({
       y: v1[1],
       z: v1[2],
       waterLevel,
+      temperature,
       getTerrainHeight,
     });
 
@@ -73,12 +80,15 @@ export function generatePlanetGeometry({
       y: v2[1],
       z: v2[2],
       waterLevel,
+      temperature,
       getTerrainHeight,
     });
 
-    const { height: h0 } = vertex0;
-    const { height: h1 } = vertex1;
-    const { height: h2 } = vertex2;
+    const { height: h0, wasWater: wasWater0 } = vertex0;
+    const { height: h1, wasWater: wasWater1 } = vertex1;
+    const { height: h2, wasWater: wasWater2 } = vertex2;
+
+    const wasWater = wasWater0 && wasWater1 && wasWater2;
 
     const centerX = (v0[0] + v1[0] + v2[0]) / 3;
     const centerY = (v0[1] + v1[1] + v2[1]) / 3;
@@ -87,6 +97,8 @@ export function generatePlanetGeometry({
 
     const triangleBiome = getBiome({
       waterLevel,
+      wasWater,
+      temperature,
       height: avgHeight,
       x: centerX,
       y: centerY,
@@ -94,7 +106,11 @@ export function generatePlanetGeometry({
       noise3D: biomeNoise,
     });
 
-    const isBaseWater = h0 < waterLevel && h1 < waterLevel && h2 < waterLevel;
+    const isBaseWater =
+      !isExtremeTemperature &&
+      h0 < waterLevel &&
+      h1 < waterLevel &&
+      h2 < waterLevel;
     const isIceOrSnowOnWater =
       isBaseWater && (triangleBiome === "ice" || triangleBiome === "snow");
     const isWater = isBaseWater && !isIceOrSnowOnWater;
@@ -130,7 +146,7 @@ export function generatePlanetGeometry({
     } else {
       // Terrain and frozen water - land mesh
       const offset = landVertCount / 3;
-      const color = getBiomeColor(triangleBiome);
+      const color = getBiomeColor(triangleBiome, colors);
 
       landPositions[landVertCount] = v0[0] * (radius + h0 * terrainStrength);
       landColors[landVertCount++] = color[0];

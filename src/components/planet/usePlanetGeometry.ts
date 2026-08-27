@@ -10,10 +10,12 @@ export function usePlanetGeometry({
   detail,
   radius,
   waterLevel,
+  temperature,
   terrainStrength,
   noiseFrequency,
   noiseOctaves,
   seed,
+  colors,
 }: PlanetGenerationOptions) {
   const [geometryResult, setGeometryResult] = useState<GeometryResult | null>(
     null,
@@ -23,19 +25,23 @@ export function usePlanetGeometry({
       detail,
       radius,
       waterLevel,
+      temperature,
       terrainStrength,
       noiseFrequency,
       noiseOctaves,
       seed,
+      colors,
     }),
     [
       detail,
       radius,
       waterLevel,
+      temperature,
       terrainStrength,
       noiseFrequency,
       noiseOctaves,
       seed,
+      colors,
     ],
   );
   const requestKey = JSON.stringify(generationRequest);

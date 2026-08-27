@@ -129,9 +129,93 @@ export const theme = createTheme({
       },
     },
 
+    Menu: {
+      styles: {
+        dropdown: {
+          background: "rgba(28, 24, 54, 0.8)",
+          border: "none",
+          borderRadius: "8px 0 0 8px",
+          backdropFilter: "blur(8px)",
+        },
+        item: {
+          color: "var(--mantine-color-snow-4)",
+        },
+      },
+    },
+
     Tooltip: {
       defaultProps: {
         color: "space.2",
+      },
+    },
+
+    Modal: {
+      defaultProps: {
+        c: "snow.4",
+        transitionProps: { transition: "fade", duration: 200 },
+      },
+      styles: {
+        content: {
+          backgroundColor: "var(--mantine-color-space-7)",
+        },
+        header: {
+          backgroundColor: "var(--mantine-color-space-7)",
+          fontWeight: 800,
+        },
+      },
+    },
+
+    TextInput: {
+      styles: {
+        input: {
+          backgroundColor: "var(--mantine-color-space-7)",
+          caretColor: "var(--mantine-color-ice-5)",
+          color: "var(--mantine-color-snow-4)",
+        },
+      },
+    },
+    Notification: {
+      defaultProps: {
+        color: "purple.6",
+        bg: "space.7",
+      },
+      styles: {
+        title: {
+          color: "var(--mantine-color-snow-2)",
+          fontWeight: 700,
+        },
+        description: {
+          color: "var(--mantine-color-snow-5)",
+        },
+      },
+    },
+    ColorPicker: {
+      defaultProps: {
+        size: "sm",
+        bg: "space.7",
+      },
+    },
+    CloseButton: {
+      styles: {
+        root: {
+          transition: "all 0.2s",
+          "&:hover": {
+            background: "var(--mantine-color-dimmed)",
+          },
+        },
+      },
+    },
+    Popover: {
+      styles: {
+        dropdown: {
+          backgroundColor: "var(--mantine-color-space-7)",
+          boxShadow: "4px 4px 12px var(--mantine-color-space-9)",
+          border: "1px solid var(--mantine-color-ice-5)",
+        },
+        arrow: {
+          backgroundColor: "var(--mantine-color-space-7)",
+          borderColor: "var(--mantine-color-ice-5)",
+        },
       },
     },
   },

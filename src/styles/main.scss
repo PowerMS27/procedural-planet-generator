@@ -13,6 +13,10 @@
   background: #1c1836;
   z-index: 50;
 }
+.presets-dropdown {
+  position: absolute;
+  top: 0 !important;
+}
 .customization-section-header__title {
   color: var(--mantine-color-purple-6);
   font-size: var(--mantine-font-size-md);
@@ -34,5 +38,8 @@
   transition: color 0.2s;
   &.button--purple:hover {
     color: var(--mantine-color-purple-6) !important;
+  }
+  &.button--ice:hover {
+    color: var(--mantine-color-ice-5) !important;
   }
 }

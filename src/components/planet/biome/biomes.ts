@@ -1,6 +1,9 @@
 import type { Biome } from "./types";
 
-export type RGBColor = [number, number, number];
+export type EditableBiome =
+  "ocean" | "grassland" | "beach" | "desert" | "mountain";
+
+type RGBColor = [number, number, number];
 
 interface BiomeDefinition {
   color: RGBColor;

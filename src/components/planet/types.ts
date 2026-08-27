@@ -1,5 +1,6 @@
 import type {
   GenerationSettings,
+  BiomeColors,
   VisualSettings,
 } from "@/components/customization/types";
 
@@ -7,10 +8,12 @@ export interface PlanetGenerationOptions {
   detail: VisualSettings["detail"];
   radius: VisualSettings["radius"];
   waterLevel: VisualSettings["waterLevel"];
+  temperature: VisualSettings["temperature"];
   terrainStrength: GenerationSettings["terrainStrength"];
   noiseFrequency: GenerationSettings["noiseFrequency"];
   noiseOctaves: GenerationSettings["noiseOctaves"];
   seed: number;
+  colors: BiomeColors;
 }
 
 export interface GeneratedPlanetGeometry {

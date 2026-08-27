@@ -23,7 +23,7 @@ function PlanetLoader({ radius }: { radius: number }) {
 }
 
 function PlanetMesh(props: PlanetGenerationOptions) {
-  const { radius } = props;
+  const { radius, colors } = props;
   const meshRef = useRef<THREE.Group>(null);
   const { geometry, isLoading } = usePlanetGeometry(props);
 
@@ -77,7 +77,7 @@ function PlanetMesh(props: PlanetGenerationOptions) {
 
               {/* water mesh */}
               <meshStandardMaterial
-                color="#5482cb"
+                color={colors.ocean}
                 roughness={0.15}
                 metalness={0.05}
                 flatShading
