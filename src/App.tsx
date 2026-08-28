@@ -28,6 +28,7 @@ function createSeed(): number {
 }
 
 function App() {
+  const [isCustomizationHidden, setIsCustomizationHidden] = useState(false);
   const [planet, setPlanet] = useState<PlanetState>({
     seed: INITIAL_SEED,
     visual: DEFAULT_VISUAL_SETTINGS,
@@ -115,26 +116,49 @@ function App() {
     <MantineProvider theme={theme}>
       <Notifications position="top-center" />
 
-      <div className="main-screen">
+      <div
+        className={`main-screen${
+          isCustomizationHidden ? " main-screen--customization-hidden" : ""
+        }`}
+      >
         <ProceduralPlanet
           visualSettings={debouncedVisual}
           generationSettings={debouncedGeneration}
           seed={planet.seed}
         />
 
-        <PlanetCustomization
-          seed={planet.seed}
-          visualSettings={planet.visual}
-          generationSettings={planet.generation}
-          onVisualChange={handleVisualChange}
-          onGenerationChange={handleGenerationChange}
-          onGenerateNew={handleGenerateNew}
-          presets={presets}
-          onPresetSelect={handlePresetSelect}
-          onSavePreset={savePreset}
-          onDeletePreset={deletePreset}
-          onColorChange={handleColorChange}
-        />
+        <div className="customization-panel">
+          <button
+            type="button"
+            className="customization-toggle"
+            aria-label={
+              isCustomizationHidden
+                ? "Show planet customization"
+                : "Hide planet customization"
+            }
+            aria-expanded={!isCustomizationHidden}
+            aria-controls="planet-customization"
+            onClick={() => setIsCustomizationHidden((current) => !current)}
+          >
+            <span className="customization-toggle__icon" aria-hidden="true">
+              <span className="customization-toggle__chevron" />
+            </span>
+          </button>
+
+          <PlanetCustomization
+            seed={planet.seed}
+            visualSettings={planet.visual}
+            generationSettings={planet.generation}
+            onVisualChange={handleVisualChange}
+            onGenerationChange={handleGenerationChange}
+            onGenerateNew={handleGenerateNew}
+            presets={presets}
+            onPresetSelect={handlePresetSelect}
+            onSavePreset={savePreset}
+            onDeletePreset={deletePreset}
+            onColorChange={handleColorChange}
+          />
+        </div>
       </div>
     </MantineProvider>
   );

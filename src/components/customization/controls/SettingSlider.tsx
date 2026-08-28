@@ -45,7 +45,7 @@ export function SettingSlider({
   };
 
   return (
-    <Stack gap="xs" mb={6}>
+    <Stack className="setting-slider" gap="xs" mb={6}>
       <Text ta="left" mb={-6}>
         {label}:{" "}
         <Text span className="setting-slider__value" c="ice.5">

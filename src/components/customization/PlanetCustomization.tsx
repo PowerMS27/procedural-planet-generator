@@ -7,6 +7,7 @@ import { CustomizationSectionHeader } from "./controls/CustomizationSectionHeade
 import { PresetMenu } from "./controls/PresetMenu";
 import { SavePresetModal } from "./controls/SavePresetModal";
 import { SettingSlider } from "./controls/SettingSlider";
+import { useScrollIndicators } from "./useScrollIndicators";
 import type { EditableBiome } from "@/components/planet/biome/biomes";
 import { BIOME_COLOR_SWATCHES } from "./biomeColorSwatches";
 
@@ -57,6 +58,13 @@ function createSliderMarks(
   }));
 }
 
+function createPresetId() {
+  return (
+    globalThis.crypto?.randomUUID?.() ??
+    `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`
+  );
+}
+
 export function PlanetCustomization({
   seed,
   visualSettings,
@@ -71,10 +79,11 @@ export function PlanetCustomization({
   onColorChange,
 }: PlanetCustomizationProps) {
   const [isSaveModalOpen, saveModal] = useDisclosure(false);
+  const scrollAreaRef = useScrollIndicators();
 
   const handleSavePreset = (name: string) => {
     onSavePreset({
-      id: crypto.randomUUID(),
+      id: createPresetId(),
       name,
       seed,
       visual: visualSettings,
@@ -90,25 +99,27 @@ export function PlanetCustomization({
   };
 
   return (
-    <aside className="planet-customization">
-      <Stack gap="md">
+    <aside id="planet-customization" className="planet-customization">
+      <Stack className="customization-layout" gap="md">
         <Text size="xs" c="dimmed" ta="left">
           Seed: {seed}
         </Text>
 
-        <PresetMenu
-          presets={presets}
-          onSelect={onPresetSelect}
-          onDelete={onDeletePreset}
-        />
+        <div className="presets-buttons">
+          <PresetMenu
+            presets={presets}
+            onSelect={onPresetSelect}
+            onDelete={onDeletePreset}
+          />
 
-        <Button
-          bd="2px solid ice.5"
-          onClick={saveModal.open}
-          className="button--ice"
-        >
-          Save Current Planet
-        </Button>
+          <Button
+            bd="2px solid ice.5"
+            onClick={saveModal.open}
+            className="button--ice"
+          >
+            Save Preset
+          </Button>
+        </div>
 
         <SavePresetModal
           opened={isSaveModalOpen}
@@ -117,120 +128,131 @@ export function PlanetCustomization({
           onSave={handleSavePreset}
         />
 
-        <Accordion multiple defaultValue={["visual", "generation"]}>
-          <Accordion.Item value="visual">
-            <Accordion.Control>
-              <CustomizationSectionHeader
-                label="Appearance"
-                tooltip="Current body visual features"
-              />
-            </Accordion.Control>
+        <div className="customization-accordion-container">
+          <div ref={scrollAreaRef} className="customization-accordion-scroll">
+            <Accordion multiple defaultValue={["visual", "generation"]}>
+              <Accordion.Item value="visual">
+                <Accordion.Control>
+                  <CustomizationSectionHeader
+                    label="Appearance"
+                    tooltip="Current body visual features"
+                  />
+                </Accordion.Control>
 
-            <Accordion.Panel>
-              <Stack gap="xs" ml="md">
-                <SettingSlider
-                  label="Planet detail"
-                  value={visualSettings.detail}
-                  onChange={(value) => onVisualChange("detail", value)}
-                  min={1}
-                  max={5}
-                  step={1}
-                  toSliderValue={(value) => value - 2}
-                  fromSliderValue={(value) => value + 2}
-                  marks={createSliderMarks(1, 5, 1)}
-                />
+                <Accordion.Panel>
+                  <Stack gap="xs" ml={{ base: 0, sm: "md" }}>
+                    <SettingSlider
+                      label="Planet detail"
+                      value={visualSettings.detail}
+                      onChange={(value) => onVisualChange("detail", value)}
+                      min={1}
+                      max={5}
+                      step={1}
+                      toSliderValue={(value) => value - 2}
+                      fromSliderValue={(value) => value + 2}
+                      marks={createSliderMarks(1, 5, 1)}
+                    />
 
-                <SettingSlider
-                  label="Temperature"
-                  value={visualSettings.temperature}
-                  onChange={(value) => onVisualChange("temperature", value)}
-                  min={-30}
-                  max={100}
-                  step={10}
-                  marks={createSliderMarks(-20, 100, 10)}
-                />
+                    <SettingSlider
+                      label="Temperature"
+                      value={visualSettings.temperature}
+                      onChange={(value) => onVisualChange("temperature", value)}
+                      min={-30}
+                      max={100}
+                      step={10}
+                      marks={createSliderMarks(-20, 100, 10)}
+                    />
 
-                <SettingSlider
-                  label="Water level"
-                  value={visualSettings.waterLevel}
-                  onChange={(value) => onVisualChange("waterLevel", value)}
-                  min={0}
-                  max={3}
-                  step={0.1}
-                  toSliderValue={(value) => value + 1.5}
-                  fromSliderValue={(value) => value - 1.5}
-                  formatValue={(value) => Number(value.toFixed(1)).toString()}
-                  sliderLabel={(value) => Number(value.toFixed(1)).toString()}
-                  marks={createSliderMarks(0, 3, 0.1)}
-                />
+                    <SettingSlider
+                      label="Water level"
+                      value={visualSettings.waterLevel}
+                      onChange={(value) => onVisualChange("waterLevel", value)}
+                      min={0}
+                      max={3}
+                      step={0.1}
+                      toSliderValue={(value) => value + 1.5}
+                      fromSliderValue={(value) => value - 1.5}
+                      formatValue={(value) =>
+                        Number(value.toFixed(1)).toString()
+                      }
+                      sliderLabel={(value) =>
+                        Number(value.toFixed(1)).toString()
+                      }
+                      marks={createSliderMarks(0, 3, 0.1)}
+                    />
 
-                <BiomeColorSettings
-                  colors={COLOR_OPTIONS.map(({ key, label }) => ({
-                    key,
-                    label,
-                    value: visualSettings.colors[key],
-                    swatches: BIOME_COLOR_SWATCHES[key],
-                  }))}
-                  onChange={onColorChange}
-                />
-              </Stack>
-            </Accordion.Panel>
-          </Accordion.Item>
+                    <BiomeColorSettings
+                      colors={COLOR_OPTIONS.map(({ key, label }) => ({
+                        key,
+                        label,
+                        value: visualSettings.colors[key],
+                        swatches: BIOME_COLOR_SWATCHES[key],
+                      }))}
+                      onChange={onColorChange}
+                    />
+                  </Stack>
+                </Accordion.Panel>
+              </Accordion.Item>
 
-          <Accordion.Item value="generation">
-            <Accordion.Control>
-              <CustomizationSectionHeader
-                label="Generation"
-                tooltip="Procedural generation controls"
-              />
-            </Accordion.Control>
+              <Accordion.Item value="generation">
+                <Accordion.Control>
+                  <CustomizationSectionHeader
+                    label="Generation"
+                    tooltip="Procedural generation controls"
+                  />
+                </Accordion.Control>
 
-            <Accordion.Panel>
-              <Stack gap="xs" ml="md">
-                <SettingSlider
-                  label="Terrain elevation"
-                  value={generationSettings.terrainStrength}
-                  onChange={(value) =>
-                    onGenerationChange("terrainStrength", value)
-                  }
-                  min={0}
-                  max={5}
-                  step={1}
-                  toSliderValue={(value) => value * 10}
-                  fromSliderValue={(value) => value / 10}
-                  marks={createSliderMarks(0, 5, 1)}
-                />
+                <Accordion.Panel>
+                  <Stack gap="xs" ml={{ base: 0, sm: "md" }}>
+                    <SettingSlider
+                      label="Terrain elevation"
+                      value={generationSettings.terrainStrength}
+                      onChange={(value) =>
+                        onGenerationChange("terrainStrength", value)
+                      }
+                      min={0}
+                      max={5}
+                      step={1}
+                      toSliderValue={(value) => value * 10}
+                      fromSliderValue={(value) => value / 10}
+                      marks={createSliderMarks(0, 5, 1)}
+                    />
 
-                <SettingSlider
-                  label="Elevation variety"
-                  value={generationSettings.noiseOctaves}
-                  onChange={(value) =>
-                    onGenerationChange("noiseOctaves", value)
-                  }
-                  min={1}
-                  max={10}
-                  step={1}
-                  marks={createSliderMarks(1, 10, 1)}
-                />
+                    <SettingSlider
+                      label="Elevation variety"
+                      value={generationSettings.noiseOctaves}
+                      onChange={(value) =>
+                        onGenerationChange("noiseOctaves", value)
+                      }
+                      min={1}
+                      max={10}
+                      step={1}
+                      marks={createSliderMarks(1, 10, 1)}
+                    />
 
-                <SettingSlider
-                  label="Elevation frequency"
-                  value={generationSettings.noiseFrequency}
-                  onChange={(value) =>
-                    onGenerationChange("noiseFrequency", value)
-                  }
-                  min={0.5}
-                  max={2}
-                  step={0.1}
-                  formatValue={(value) => value.toFixed(1)}
-                  marks={createSliderMarks(0.5, 2, 0.1)}
-                />
-              </Stack>
-            </Accordion.Panel>
-          </Accordion.Item>
-        </Accordion>
+                    <SettingSlider
+                      label="Elevation frequency"
+                      value={generationSettings.noiseFrequency}
+                      onChange={(value) =>
+                        onGenerationChange("noiseFrequency", value)
+                      }
+                      min={0.5}
+                      max={2}
+                      step={0.1}
+                      formatValue={(value) => value.toFixed(1)}
+                      marks={createSliderMarks(0.5, 2, 0.1)}
+                    />
+                  </Stack>
+                </Accordion.Panel>
+              </Accordion.Item>
+            </Accordion>
+          </div>
+        </div>
 
-        <Button onClick={onGenerateNew} className="button--purple">
+        <Button
+          onClick={onGenerateNew}
+          className="button--purple customization-generate-button"
+        >
           Generate New
         </Button>
       </Stack>

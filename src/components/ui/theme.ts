@@ -56,7 +56,8 @@ const colors = {
 };
 
 export const theme = createTheme({
-  fontFamily: "Inter, sans-serif",
+  fontFamily:
+    'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
   fontFamilyMonospace: "Monaco, Courier, monospace",
 
   fontSizes: {
@@ -214,7 +215,10 @@ export const theme = createTheme({
         },
         arrow: {
           backgroundColor: "var(--mantine-color-space-7)",
-          borderColor: "var(--mantine-color-ice-5)",
+          borderTopColor: "var(--mantine-color-ice-5)",
+          borderRightColor: "var(--mantine-color-ice-5)",
+          borderBottomColor: "var(--mantine-color-ice-5)",
+          borderLeftColor: "var(--mantine-color-ice-5)",
         },
       },
     },

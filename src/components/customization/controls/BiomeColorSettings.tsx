@@ -5,6 +5,7 @@ import {
   Popover,
   Stack,
   Text,
+  UnstyledButton,
 } from "@mantine/core";
 import type { EditableBiome } from "@/components/planet/biome/biomes";
 
@@ -28,7 +29,7 @@ export function BiomeColorSettings({
     <Stack gap="md" mb={6}>
       <Group gap="md" wrap="wrap" justify="space-between">
         {colors.map((color) => (
-          <Stack key={color.key}>
+          <Stack key={color.key} className="biome-color-option">
             <Popover
               width="auto"
               position="bottom"
@@ -37,21 +38,12 @@ export function BiomeColorSettings({
               arrowSize={8}
             >
               <Popover.Target>
-                <Stack
-                  gap="6"
-                  style={{ cursor: "pointer", border: 0 }}
-                  align="center"
-                >
-                  <ColorSwatch
-                    component="button"
-                    type="button"
-                    color={color.value}
-                    size={21}
-                    radius="sm"
-                    style={{ cursor: "pointer", border: 0 }}
-                  />
-                  <Text size="xs">{color.label}</Text>
-                </Stack>
+                <UnstyledButton aria-label={`Choose ${color.label} color`}>
+                  <Stack gap="6" align="center">
+                    <ColorSwatch color={color.value} size={21} radius="sm" />
+                    <Text size="xs">{color.label}</Text>
+                  </Stack>
+                </UnstyledButton>
               </Popover.Target>
 
               <Popover.Dropdown>
