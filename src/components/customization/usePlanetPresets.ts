@@ -1,43 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DEFAULT_PRESETS } from "./planetDefaults";
 import type { PlanetPreset } from "./types";
 
-const COOKIE_NAME = "planet-presets";
-const DELETED_COOKIE_NAME = "planet-deleted-presets";
-const MAX_AGE = 60 * 60 * 24 * 365;
+const PRESETS_STORAGE_KEY = "planet-presets";
+const DELETED_PRESETS_STORAGE_KEY = "planet-deleted-presets";
 
-function readCookie<T>(name: string, fallback: T): T {
-  const value = document.cookie
-    .split("; ")
-    .find((cookie) => cookie.startsWith(`${name}=`))
-    ?.split("=")[1];
-
-  if (!value) return fallback;
-
+function readStorage<T>(key: string, fallback: T): T {
   try {
-    return JSON.parse(decodeURIComponent(value)) as T;
+    const value = localStorage.getItem(key);
+    return value === null ? fallback : (JSON.parse(value) as T);
   } catch {
     return fallback;
   }
 }
 
-function writeCookie<T>(name: string, value: T): void {
-  document.cookie = [
-    `${name}=${encodeURIComponent(JSON.stringify(value))}`,
-    `max-age=${MAX_AGE}`,
-    "path=/",
-    "samesite=lax",
-  ].join("; ");
+function writeStorage<T>(key: string, value: T) {
+  localStorage.setItem(key, JSON.stringify(value));
 }
 
 export function usePlanetPresets() {
   const [customPresets, setCustomPresets] = useState<PlanetPreset[]>(() =>
-    readCookie<PlanetPreset[]>(COOKIE_NAME, []),
+    readStorage<PlanetPreset[]>(PRESETS_STORAGE_KEY, []),
   );
 
   const [deletedPresetIds, setDeletedPresetIds] = useState<string[]>(() =>
-    readCookie<string[]>(DELETED_COOKIE_NAME, []),
+    readStorage<string[]>(DELETED_PRESETS_STORAGE_KEY, []),
   );
+
+  useEffect(() => {
+    writeStorage(PRESETS_STORAGE_KEY, customPresets);
+  }, [customPresets]);
+
+  useEffect(() => {
+    writeStorage(DELETED_PRESETS_STORAGE_KEY, deletedPresetIds);
+  }, [deletedPresetIds]);
 
   const presets = [
     ...DEFAULT_PRESETS.filter(
@@ -47,29 +43,19 @@ export function usePlanetPresets() {
   ];
 
   const savePreset = (preset: PlanetPreset) => {
-    setCustomPresets((current) => {
-      const next = [...current, preset];
-      writeCookie(COOKIE_NAME, next);
-      return next;
-    });
+    setCustomPresets((current) => [...current, preset]);
   };
 
   const deletePreset = (id: string) => {
     if (DEFAULT_PRESETS.some((preset) => preset.id === id)) {
-      setDeletedPresetIds((current) => {
-        const next = [...current, id];
-        writeCookie(DELETED_COOKIE_NAME, next);
-        return next;
-      });
+      setDeletedPresetIds((current) => [...current, id]);
 
       return;
     }
 
-    setCustomPresets((current) => {
-      const next = current.filter((preset) => preset.id !== id);
-      writeCookie(COOKIE_NAME, next);
-      return next;
-    });
+    setCustomPresets((current) =>
+      current.filter((preset) => preset.id !== id),
+    );
   };
 
   return {
