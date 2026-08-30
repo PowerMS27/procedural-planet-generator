@@ -56,6 +56,9 @@ button,
   position: absolute;
   top: 0 !important;
   min-width: 180px;
+  max-height: 100vh;
+  max-height: 100dvh;
+  overflow-y: auto;
 }
 
 .presets-buttons {
@@ -74,6 +77,10 @@ button,
 
   &:hover {
     background: var(--mantine-color-space-6);
+  }
+
+  &[data-selected] {
+    background: var(--mantine-color-purple-9);
   }
 }
 

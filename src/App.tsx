@@ -7,11 +7,7 @@ import { PlanetCustomization } from "@/components/customization/PlanetCustomizat
 import { usePlanetPresets } from "@/components/customization/usePlanetPresets";
 import type { EditableBiome } from "@/components/planet/biome/biomes";
 
-import {
-  DEFAULT_GENERATION_SETTINGS,
-  DEFAULT_VISUAL_SETTINGS,
-  INITIAL_SEED,
-} from "@/components/customization/planetDefaults";
+import { DEFAULT_PRESETS } from "@/components/customization/planetDefaults";
 
 import type {
   GenerationSettings,
@@ -30,9 +26,9 @@ function createSeed(): number {
 function App() {
   const [isCustomizationHidden, setIsCustomizationHidden] = useState(false);
   const [planet, setPlanet] = useState<PlanetState>({
-    seed: INITIAL_SEED,
-    visual: DEFAULT_VISUAL_SETTINGS,
-    generation: DEFAULT_GENERATION_SETTINGS,
+    seed: DEFAULT_PRESETS[0].seed,
+    visual: DEFAULT_PRESETS[0].visual,
+    generation: DEFAULT_PRESETS[0].generation,
   });
 
   const handleColorChange = (biome: EditableBiome, color: string) => {

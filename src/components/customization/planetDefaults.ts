@@ -20,8 +20,6 @@ export const DEFAULT_GENERATION_SETTINGS: GenerationSettings = {
   noiseOctaves: 4,
 };
 
-export const INITIAL_SEED = 1;
-
 export const DEFAULT_PRESETS: PlanetPreset[] = [
   {
     id: "earth",

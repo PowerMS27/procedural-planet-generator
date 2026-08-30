@@ -8,6 +8,10 @@ import { PresetMenu } from "./controls/PresetMenu";
 import { SavePresetModal } from "./controls/SavePresetModal";
 import { SettingSlider } from "./controls/SettingSlider";
 import { useScrollIndicators } from "./useScrollIndicators";
+import {
+  MAX_CUSTOM_PRESETS,
+  type PresetActionResult,
+} from "./usePlanetPresets";
 import type { EditableBiome } from "@/components/planet/biome/biomes";
 import { BIOME_COLOR_SWATCHES } from "./biomeColorSwatches";
 
@@ -32,8 +36,8 @@ interface PlanetCustomizationProps {
 
   presets: PlanetPreset[];
   onPresetSelect: (preset: PlanetPreset) => void;
-  onSavePreset: (preset: PlanetPreset) => void;
-  onDeletePreset: (id: string) => void;
+  onSavePreset: (preset: PlanetPreset) => PresetActionResult;
+  onDeletePreset: (id: string) => PresetActionResult;
   onColorChange: (biome: EditableBiome, color: string) => void;
 }
 
@@ -80,15 +84,55 @@ export function PlanetCustomization({
 }: PlanetCustomizationProps) {
   const [isSaveModalOpen, saveModal] = useDisclosure(false);
   const scrollAreaRef = useScrollIndicators();
+  const currentPlanet = JSON.stringify({
+    seed,
+    visual: visualSettings,
+    generation: generationSettings,
+  });
+  const selectedPreset = presets.find(
+    (preset) =>
+      JSON.stringify({
+        seed: preset.seed,
+        visual: preset.visual,
+        generation: preset.generation,
+      }) === currentPlanet,
+  );
 
   const handleSavePreset = (name: string) => {
-    onSavePreset({
+    if (selectedPreset) {
+      notifications.show({
+        title: "Preset already saved",
+        message: `These settings are already saved as "${selectedPreset.name}"`,
+        color: "red",
+      });
+      return false;
+    }
+
+    const result = onSavePreset({
       id: createPresetId(),
       name,
       seed,
       visual: visualSettings,
       generation: generationSettings,
     });
+
+    if (result === "limit-reached") {
+      notifications.show({
+        title: "Preset limit reached",
+        message: `You can save up to ${MAX_CUSTOM_PRESETS} custom presets`,
+        color: "red",
+      });
+      return false;
+    }
+
+    if (result === "storage-error") {
+      notifications.show({
+        title: "Could not save preset",
+        message: "Browser storage is unavailable. Please try again",
+        color: "red",
+      });
+      return false;
+    }
 
     notifications.show({
       title: "Preset saved",
@@ -97,6 +141,17 @@ export function PlanetCustomization({
     });
 
     saveModal.close();
+    return true;
+  };
+
+  const handleDeletePreset = (id: string) => {
+    if (onDeletePreset(id) === "storage-error") {
+      notifications.show({
+        title: "Could not delete preset",
+        message: "Browser storage is unavailable. Please try again",
+        color: "red",
+      });
+    }
   };
 
   return (
@@ -109,8 +164,9 @@ export function PlanetCustomization({
         <div className="presets-buttons">
           <PresetMenu
             presets={presets}
+            selectedPresetId={selectedPreset?.id ?? null}
             onSelect={onPresetSelect}
-            onDelete={onDeletePreset}
+            onDelete={handleDeletePreset}
           />
 
           <Button

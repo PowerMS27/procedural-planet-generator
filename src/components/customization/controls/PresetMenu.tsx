@@ -13,11 +13,17 @@ import type { PlanetPreset } from "../types";
 
 interface PresetMenuProps {
   presets: PlanetPreset[];
+  selectedPresetId: string | null;
   onSelect: (preset: PlanetPreset) => void;
   onDelete: (id: string) => void;
 }
 
-function PresetList({ presets, onSelect, onDelete }: PresetMenuProps) {
+function PresetList({
+  presets,
+  onSelect,
+  onDelete,
+  selectedPresetId,
+}: PresetMenuProps) {
   if (presets.length === 0) {
     return (
       <Text c="dimmed" ta="center" py="sm">
@@ -32,6 +38,8 @@ function PresetList({ presets, onSelect, onDelete }: PresetMenuProps) {
         <Group key={preset.id} gap={4} wrap="nowrap">
           <UnstyledButton
             className="preset-list__item"
+            data-selected={preset.id === selectedPresetId || undefined}
+            aria-pressed={preset.id === selectedPresetId}
             onClick={() => onSelect(preset)}
           >
             {preset.name}
@@ -49,7 +57,12 @@ function PresetList({ presets, onSelect, onDelete }: PresetMenuProps) {
   );
 }
 
-export function PresetMenu({ presets, onSelect, onDelete }: PresetMenuProps) {
+export function PresetMenu({
+  presets,
+  selectedPresetId,
+  onSelect,
+  onDelete,
+}: PresetMenuProps) {
   const isMobile = useMediaQuery("(max-width: 48em)");
   const [isModalOpen, modal] = useDisclosure(false);
   const [isMenuOpen, menu] = useDisclosure(false);
@@ -72,9 +85,10 @@ export function PresetMenu({ presets, onSelect, onDelete }: PresetMenuProps) {
             close: "modal-close",
           }}
         >
-          <Stack mt={8} mx={-2}>
+          <Stack mx={-2}>
             <PresetList
               presets={presets}
+              selectedPresetId={selectedPresetId}
               onSelect={(preset) => {
                 onSelect(preset);
                 modal.close();
@@ -105,6 +119,7 @@ export function PresetMenu({ presets, onSelect, onDelete }: PresetMenuProps) {
       <Menu.Dropdown className="presets-dropdown">
         <PresetList
           presets={presets}
+          selectedPresetId={selectedPresetId}
           onSelect={(preset) => {
             onSelect(preset);
             menu.close();
