@@ -93,6 +93,7 @@ export function PlanetCustomization({
     notifications.show({
       title: "Preset saved",
       message: `"${name}" has been added to presets`,
+      autoClose: 2000,
     });
 
     saveModal.close();
@@ -135,7 +136,7 @@ export function PlanetCustomization({
                 <Accordion.Control>
                   <CustomizationSectionHeader
                     label="Appearance"
-                    tooltip="Current body visual features"
+                    tooltip="Planet appearance settings"
                   />
                 </Accordion.Control>
 
@@ -198,7 +199,7 @@ export function PlanetCustomization({
                 <Accordion.Control>
                   <CustomizationSectionHeader
                     label="Generation"
-                    tooltip="Procedural generation controls"
+                    tooltip="Terrain generation settings"
                   />
                 </Accordion.Control>
 

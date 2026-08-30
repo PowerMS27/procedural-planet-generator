@@ -10,4 +10,5 @@ body,
 }
 body {
   margin: 0;
+  background: var(--mantine-color-space-6);
 }

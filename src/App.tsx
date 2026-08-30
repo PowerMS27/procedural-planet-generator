@@ -141,7 +141,9 @@ function App() {
             onClick={() => setIsCustomizationHidden((current) => !current)}
           >
             <span className="customization-toggle__icon" aria-hidden="true">
-              <span className="customization-toggle__chevron" />
+              <svg width="16" height="16" aria-hidden="true">
+                <use href="/icons.svg#chevron" />
+              </svg>
             </span>
           </button>
 

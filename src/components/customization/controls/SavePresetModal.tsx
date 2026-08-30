@@ -16,7 +16,7 @@ export function SavePresetModal({
   onSave,
 }: SavePresetModalProps) {
   const [name, setName] = useState("");
-  const isMobile = useMediaQuery("(max-width: 50em)");
+  const isMobile = useMediaQuery("(max-width: 48em)");
 
   const handleClose = () => {
     setName("");
@@ -32,12 +32,16 @@ export function SavePresetModal({
     <Modal
       opened={opened}
       onClose={handleClose}
-      title="New Preset"
+      title="Save a new preset"
       size="xs"
       fullScreen={isMobile}
+      classNames={{
+        close: "modal-close",
+      }}
     >
       <TextInput
-        data-autofocus
+        data-autofocus={isMobile ? undefined : true}
+        size={isMobile ? "md" : "sm"}
         label="Name"
         placeholder={defaultName}
         value={name}

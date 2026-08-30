@@ -17,9 +17,19 @@ export function CustomizationSectionHeader({
         label={tooltip}
         withArrow
         position="top"
+        events={{ hover: true, focus: false, touch: true }}
         transitionProps={{ transition: "fade", duration: 200 }}
       >
-        <Text className="customization-section-header__info">i</Text>
+        <Text
+          component="span"
+          className="customization-section-header__info"
+          mt={5}
+          onClick={(event) => event.stopPropagation()}
+        >
+          <svg width="16" height="16" aria-hidden="true">
+            <use href="/icons.svg#info" />
+          </svg>
+        </Text>
       </Tooltip>
     </Group>
   );

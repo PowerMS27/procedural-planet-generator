@@ -1,11 +1,12 @@
 import {
-  ActionIcon,
   Button,
   Group,
   Menu,
   Modal,
   Stack,
+  Text,
   UnstyledButton,
+  CloseButton,
 } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import type { PlanetPreset } from "../types";
@@ -17,6 +18,14 @@ interface PresetMenuProps {
 }
 
 function PresetList({ presets, onSelect, onDelete }: PresetMenuProps) {
+  if (presets.length === 0) {
+    return (
+      <Text c="dimmed" ta="center" py="sm">
+        No saved presets yet
+      </Text>
+    );
+  }
+
   return (
     <Stack gap={4}>
       {presets.map((preset) => (
@@ -28,15 +37,12 @@ function PresetList({ presets, onSelect, onDelete }: PresetMenuProps) {
             {preset.name}
           </UnstyledButton>
 
-          <ActionIcon
-            variant="subtle"
-            color="red"
+          <CloseButton
             size="sm"
+            c="purple.6"
             aria-label={`Delete ${preset.name}`}
             onClick={() => onDelete(preset.id)}
-          >
-            x
-          </ActionIcon>
+          />
         </Group>
       ))}
     </Stack>
@@ -58,17 +64,24 @@ export function PresetMenu({ presets, onSelect, onDelete }: PresetMenuProps) {
         <Modal
           opened={isModalOpen}
           onClose={modal.close}
-          title="Presets"
+          title="Select or delete a preset"
           fullScreen
+          classNames={{
+            content: "presets-modal__content",
+            body: "presets-modal__body",
+            close: "modal-close",
+          }}
         >
-          <PresetList
-            presets={presets}
-            onSelect={(preset) => {
-              onSelect(preset);
-              modal.close();
-            }}
-            onDelete={onDelete}
-          />
+          <Stack mt={8} mx={-2}>
+            <PresetList
+              presets={presets}
+              onSelect={(preset) => {
+                onSelect(preset);
+                modal.close();
+              }}
+              onDelete={onDelete}
+            />
+          </Stack>
         </Modal>
       </>
     );
