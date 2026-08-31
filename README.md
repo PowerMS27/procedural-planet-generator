@@ -1,73 +1,29 @@
-# React + TypeScript + Vite
+# Procedural Planet Generator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![hippo](https://media.giphy.com/media/7aKs5PueGCy3hFJjfz/giphy.gif)
 
-Currently, two official plugins are available:
+## Description
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+An interactive 3D planet generator built with React and Three.js. Planets are generated from a seed using Simplex Noise, with separate low-poly terrain and reflective water meshes.
 
-## React Compiler
+Users can customize the planet in real time, including:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Terrain elevation, frequency, and variety
+- Water level and temperature
+- Biome colors
+- Planet mesh detail
 
-## Expanding the ESLint configuration
+Custom planets can be saved as presets in the browser. The interface is responsive and adapted for both desktop and mobile devices, with mobile-friendly modals, scrollable settings and a collapsible customization panel.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Planet generation runs in a Web Worker to keep the interface responsive while settings are changed.
 
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+## Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
-
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+- React
+- TypeScript
+- Three.js
+- React Three Fiber
+- Mantine
+- SCSS
+- Simplex Noise
+- Web Workers
