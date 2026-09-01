@@ -2,9 +2,9 @@
 
 **[View Live Demo](https://procedural-planet-generator.netlify.app/)**
 
-<img width="420" alt="Procedural Planet Generator on desktop" src="https://github.com/user-attachments/assets/3d8630f2-b75d-46ca-8ce8-eb114711be0d" />
+<img width="416" alt="Procedural Planet Generator on desktop" src="https://github.com/user-attachments/assets/3d8630f2-b75d-46ca-8ce8-eb114711be0d" />
 
-<img width="420" alt="Procedural Planet Generator on mobile" src="https://github.com/user-attachments/assets/43281af0-582d-4a51-bedf-bae59b7a489f" />
+<img width="416" alt="Procedural Planet Generator on mobile" src="https://github.com/user-attachments/assets/43281af0-582d-4a51-bedf-bae59b7a489f" />
 
 ## Description
 
